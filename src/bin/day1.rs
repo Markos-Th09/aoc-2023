@@ -1,3 +1,5 @@
+use aoc_2023::aoc;
+
 fn part1(input: &str) -> u32 {
     input
         .lines()
@@ -55,32 +57,19 @@ fn part2(input: &str) -> u32 {
         .sum()
 }
 
-fn main() {
-    let input = include_str!("./day1.txt");
-    println!("part1: {:?}", part1(input));
-    println!("part2: {:?}", part2(input));
-}
-
-#[cfg(test)]
-mod test {
-
-    #[test]
-    fn part1() {
-        const SAMPLE_INPUT: &str = r"1abc2
+aoc!(
+    1,
+    r"1abc2
 pqr3stu8vwx
 a1b2c3d4e5f
-treb7uchet";
-        assert_eq!(super::part1(SAMPLE_INPUT), 142);
-    }
-    #[test]
-    fn part2() {
-        const SAMPLE_INPUT: &str = r"two1nine
+treb7uchet",
+    142,
+    r"two1nine
 eightwothree
 abcone2threexyz
 xtwone3four
 4nineeightseven2
 zoneight234
-7pqrstsixteen";
-        assert_eq!(super::part2(SAMPLE_INPUT), 281);
-    }
-}
+7pqrstsixteen",
+    281
+);

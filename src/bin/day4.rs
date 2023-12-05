@@ -20,13 +20,7 @@ fn parse(input: &str) -> impl Iterator<Item = u32> + '_ {
 
 fn part1(input: &str) -> u32 {
     parse(input)
-        .map(|won| {
-            if won == 0 {
-                0
-            } else {
-                (1..won).fold(1, |acc, _| acc * 2)
-            }
-        })
+        .map(|won| if won == 0 { 0 } else { 2u32.pow(won - 1) })
         .sum()
 }
 
@@ -35,9 +29,12 @@ fn part2(input: &str) -> u32 {
     parse(input)
         .zip(1..)
         .map(|(won, i)| {
-            let copies = *counts.entry(i).or_insert(0) + 1;
+            let copies = counts.get(&i).copied().unwrap_or(0) + 1;
             for n in 1..=won {
-                *counts.entry(i + n).or_insert(0) += copies;
+                counts
+                    .entry(i + n)
+                    .and_modify(|c| *c += copies)
+                    .or_insert(copies);
             }
             copies
         })

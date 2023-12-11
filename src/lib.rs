@@ -1,3 +1,5 @@
+use std::mem::{self, MaybeUninit};
+
 #[macro_export]
 macro_rules! aoc {
     ($day:literal, $part1_sample:literal, $part1_expected:literal) => {
@@ -47,7 +49,7 @@ pub trait IteratorExt: Iterator {
     where
         Self: Sized,
     {
-        Chunks::<N, _> { iter: self }
+        Chunks { iter: self }
     }
 }
 
@@ -60,12 +62,12 @@ pub struct Chunks<const N: usize, I: Iterator> {
 impl<const N: usize, I: Iterator> Iterator for Chunks<N, I> {
     type Item = [I::Item; N];
 
-    #[allow(clippy::needless_range_loop)]
     fn next(&mut self) -> Option<Self::Item> {
-        let mut chunk: [I::Item; N] = unsafe { std::mem::MaybeUninit::zeroed().assume_init() };
-        for i in 0..N {
-            chunk[i] = self.iter.next()?;
+        let mut chunk: [MaybeUninit<I::Item>; N] = unsafe { MaybeUninit::uninit().assume_init() };
+        for elem in &mut chunk {
+            *elem = MaybeUninit::new(self.iter.next()?);
         }
+        let chunk = unsafe { mem::transmute_copy::<_, [I::Item; N]>(&chunk) };
         Some(chunk)
     }
 
